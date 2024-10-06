@@ -8,26 +8,28 @@ import { Link } from "react-router-dom";
 import { BigNumber } from "ethers";
 //import { decode } from "./wld.ts";
 import { IDKitWidget, ISuccessResult, useIDKit } from "@worldcoin/idkit";
-// import {
-//   useAccount,
-//   useWriteContract,
-//   useWaitForTransactionReceipt,
-//   type BaseError,
-// } from "wagmi";
-// import { decodeAbiParameters, parseAbiParameters } from "viem";
+
 
 const Navbar = () => {
   // 1. Get projectId
   const projectId = "dbe843c72438dc8cab711ae11e6876fc";
 
   // 2. Set chains
-  const scroll = {
+  const mainnet = {
     chainId: 1,
     name: "Ethereum",
     currency: "ETH",
     explorerUrl: "https://etherscan.io",
     rpcUrl: "https://cloudflare-eth.com",
   };
+
+   const scroll = {
+     chainId: 534351,
+     name: "Scroll",
+     currency: "ETH",
+     explorerUrl: "https://sepolia.scrollscan.com/",
+     rpcUrl: "https://rpc.ankr.com/scroll_sepolia_testnet",
+   };
 
   // 3. Create a metadata object
   const metadata = {
@@ -60,79 +62,245 @@ const Navbar = () => {
   });
 
   const abi = [
-    {
-      inputs: [
-        {
-          internalType: "contract IWorldID",
-          name: "_worldId",
-          type: "address",
-        },
-        {
-          internalType: "string",
-          name: "_appId",
-          type: "string",
-        },
-        {
-          internalType: "string",
-          name: "_actionId",
-          type: "string",
-        },
-      ],
-      stateMutability: "nonpayable",
-      type: "constructor",
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "nullifierHash",
-          type: "uint256",
-        },
-      ],
-      name: "DuplicateNullifier",
-      type: "error",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "nullifierHash",
-          type: "uint256",
-        },
-      ],
-      name: "Verified",
-      type: "event",
-    },
-    {
-      inputs: [
-        {
-          internalType: "address",
-          name: "signal",
-          type: "address",
-        },
-        {
-          internalType: "uint256",
-          name: "root",
-          type: "uint256",
-        },
-        {
-          internalType: "uint256",
-          name: "nullifierHash",
-          type: "uint256",
-        },
-        {
-          internalType: "uint256[8]",
-          name: "proof",
-          type: "uint256[8]",
-        },
-      ],
-      name: "verifyAndExecute",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
+    [
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "eventId",
+            type: "uint256",
+          },
+        ],
+        name: "EventCreated",
+        type: "event",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "proposalId",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "string",
+            name: "title",
+            type: "string",
+          },
+          {
+            indexed: false,
+            internalType: "address",
+            name: "creator",
+            type: "address",
+          },
+        ],
+        name: "ProposalCreated",
+        type: "event",
+      },
+      {
+        inputs: [
+          {
+            internalType: "string",
+            name: "_name",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "_date",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "_location",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "_maxAttendees",
+            type: "uint256",
+          },
+        ],
+        name: "createEvent",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "eventId",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "proposalTitle",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "proposalDescription",
+            type: "string",
+          },
+        ],
+        name: "createProposal",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        name: "events",
+        outputs: [
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "date",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "location",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "maxAttendees",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "registeredAttendees",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "exists",
+            type: "bool",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "_eventId",
+            type: "uint256",
+          },
+        ],
+        name: "getEventDetails",
+        outputs: [
+          {
+            internalType: "string",
+            name: "",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "proposalCounter",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        name: "proposals",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "title",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "description",
+            type: "string",
+          },
+          {
+            internalType: "address",
+            name: "creator",
+            type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "isOpen",
+            type: "bool",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "_eventId",
+            type: "uint256",
+          },
+        ],
+        name: "registerForEvent",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+    ],
   ];
 
   // const address = "0x469449f251692E0779667583026b5A1E99512157";
